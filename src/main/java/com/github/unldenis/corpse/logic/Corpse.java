@@ -190,6 +190,10 @@ public class Corpse {
         return id;
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     @NotNull
     public String getName() {
         return name;

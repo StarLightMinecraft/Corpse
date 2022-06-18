@@ -19,8 +19,14 @@
 package com.github.unldenis.corpse.manager;
 
 import com.github.unldenis.corpse.*;
+import com.github.unldenis.corpse.api.CorpseAPI;
 import com.github.unldenis.corpse.logic.*;
 import com.google.common.collect.*;
+import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import org.bukkit.*;
 import org.bukkit.configuration.file.*;
 import org.bukkit.entity.*;
@@ -30,6 +36,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.scheduler.*;
 import org.jetbrains.annotations.*;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -133,7 +141,7 @@ public class CorpsePool implements Listener {
 
     public void takeCareOf(@NotNull Corpse corpse) {
         // Prevent two corpses with same name and showTags is enabled
-        if(this.showTags) {
+        if (this.showTags) {
             this.getCorpse(corpse.getName()).ifPresent(c -> {
                 this.corpseMap.remove(c.getId());
                 c.getSeeingPlayers()
@@ -179,19 +187,43 @@ public class CorpsePool implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void handleDeath(PlayerDeathEvent event) {
-        event.setDeathMessage(null);
-        if(onDeath) {
+        //event.setDeathMessage(null);
+        if (onDeath) {
             new Corpse(event.getEntity());
         }
     }
 
     @NotNull
     public static synchronized CorpsePool getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new CorpsePool();
         }
         return instance;
     }
+
+    public void loadCorpses(File data) throws FileNotFoundException {
+        new Gson().fromJson(Files.newReader(data, StandardCharsets.UTF_8), JsonArray.class).forEach(json -> {
+            JsonObject obj = json.getAsJsonObject();
+            OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(obj.get("uuid").getAsString()));
+            Location location = Location.deserialize(new Gson().fromJson(obj.get("location"), new TypeToken<Map<String, Object>>() {
+            }.getType()));
+            Corpse corpse = CorpseAPI.getInstance().spawnCorpse(player, location);
+        });
+    }
+
+    public void saveCorpses(File data) throws IOException {
+        try (BufferedWriter writer = Files.newWriter(data, StandardCharsets.UTF_8)) {
+            JsonArray array = new JsonArray();
+            this.getCorpses().forEach(it->{
+                JsonObject obj = new JsonObject();
+                obj.addProperty("uuid", it.getUuid().toString());
+                obj.add("location", new Gson().toJsonTree(it.getLocation().serialize()));
+                array.add(obj);
+            });
+            writer.write(new Gson().toJson(array));
+        }
+    }
+
 }
