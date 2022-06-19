@@ -206,19 +206,24 @@ public class CorpsePool implements Listener {
     public void loadCorpses(File data) throws FileNotFoundException {
         new Gson().fromJson(Files.newReader(data, StandardCharsets.UTF_8), JsonArray.class).forEach(json -> {
             JsonObject obj = json.getAsJsonObject();
-            OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(obj.get("uuid").getAsString()));
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(obj.get("uuid").getAsString()));
+            Player player = Bukkit.getPlayer(UUID.fromString(obj.get("uuid").getAsString()));
             Location location = Location.deserialize(new Gson().fromJson(obj.get("location"), new TypeToken<Map<String, Object>>() {
             }.getType()));
-            CorpseAPI.getInstance().spawnCorpse(player, location);
+            if (player == null) {
+                CorpseAPI.getInstance().spawnCorpse(offlinePlayer, location);
+            } else {
+                CorpseAPI.getInstance().spawnCorpse(player, location);
+            }
         });
     }
 
     public void saveCorpses(File data) throws IOException {
         try (BufferedWriter writer = Files.newWriter(data, StandardCharsets.UTF_8)) {
             JsonArray array = new JsonArray();
-            this.getCorpses().forEach(it->{
+            this.getCorpses().forEach(it -> {
                 JsonObject obj = new JsonObject();
-                obj.addProperty("uuid", it.getUuid().toString());
+                obj.addProperty("uuid", it.getPlayerUuid().toString());
                 obj.add("location", new Gson().toJsonTree(it.getLocation().serialize()));
                 array.add(obj);
             });
