@@ -208,6 +208,10 @@ public class Corpse {
         return playerUuid;
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     @NotNull
     public Collection<Player> getSeeingPlayers() {
         return Collections.unmodifiableCollection(this.seeingPlayers);

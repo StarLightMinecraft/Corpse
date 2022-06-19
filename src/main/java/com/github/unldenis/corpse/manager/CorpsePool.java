@@ -209,7 +209,7 @@ public class CorpsePool implements Listener {
             OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(obj.get("uuid").getAsString()));
             Location location = Location.deserialize(new Gson().fromJson(obj.get("location"), new TypeToken<Map<String, Object>>() {
             }.getType()));
-            Corpse corpse = CorpseAPI.getInstance().spawnCorpse(player, location);
+            CorpseAPI.getInstance().spawnCorpse(player, location);
         });
     }
 
@@ -218,7 +218,7 @@ public class CorpsePool implements Listener {
             JsonArray array = new JsonArray();
             this.getCorpses().forEach(it->{
                 JsonObject obj = new JsonObject();
-                obj.addProperty("uuid", it.getPlayerUuid().toString());
+                obj.addProperty("uuid", it.getUuid().toString());
                 obj.add("location", new Gson().toJsonTree(it.getLocation().serialize()));
                 array.add(obj);
             });
