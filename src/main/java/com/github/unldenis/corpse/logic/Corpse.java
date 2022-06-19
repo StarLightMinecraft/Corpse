@@ -40,6 +40,8 @@ public class Corpse {
 
     protected final UUID uuid;
 
+    protected final UUID playerUuid;
+
     protected final String name;
 
     protected final Location location;
@@ -61,12 +63,14 @@ public class Corpse {
             @NotNull Location location,
             @NotNull WrappedGameProfile wrappedGameProfile,
             @Nullable ItemStack[] armorContents,
-            @Nullable String name
+            @Nullable String name,
+            @Nullable UUID playerUuid
     ) {
         pool = CorpsePool.getInstance();
 
         this.id = pool.getFreeEntityId();
         this.uuid = new UUID(new Random().nextLong(), 0);
+        this.playerUuid = playerUuid;
         this.name = name == null ? ProfileUtils.randomName() : name;
         this.location = location;
         this.profile = new WrappedGameProfile(this.uuid, this.name);
@@ -93,7 +97,7 @@ public class Corpse {
     }
 
     public Corpse(@NotNull Player player) {
-        this(player.getLocation(), WrappedGameProfile.fromPlayer(player), player.getInventory().getArmorContents(), player.getName());
+        this(player.getLocation(), WrappedGameProfile.fromPlayer(player), player.getInventory().getArmorContents(), player.getName(),player.getUniqueId());
     }
 
     public Corpse(
@@ -101,7 +105,7 @@ public class Corpse {
             @NotNull OfflinePlayer offlinePlayer,
             @Nullable ItemStack[] armorContents
     ) {
-        this(location, WrappedGameProfile.fromOfflinePlayer(offlinePlayer), armorContents, offlinePlayer.getName());
+        this(location, WrappedGameProfile.fromOfflinePlayer(offlinePlayer), armorContents, offlinePlayer.getName(),offlinePlayer.getUniqueId());
     }
 
     @ApiStatus.Internal
@@ -190,10 +194,6 @@ public class Corpse {
         return id;
     }
 
-    public UUID getUuid() {
-        return uuid;
-    }
-
     @NotNull
     public String getName() {
         return name;
@@ -202,6 +202,10 @@ public class Corpse {
     @NotNull
     public Location getLocation() {
         return location;
+    }
+
+    public UUID getPlayerUuid() {
+        return playerUuid;
     }
 
     @NotNull

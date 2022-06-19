@@ -56,7 +56,7 @@ public class CorpseAPI {
     public Corpse spawnCorpse(@NotNull Player player, @NotNull Location location) {
         Validate.notNull(player, "Player cannot be null");
         Validate.notNull(location, "Spawn location cannot be null");
-        return new Corpse(location, WrappedGameProfile.fromPlayer(player), null, player.getName());
+        return new Corpse(location, WrappedGameProfile.fromPlayer(player), null, player.getName(),player.getUniqueId());
     }
 
     /**
@@ -92,7 +92,7 @@ public class CorpseAPI {
     ) {
         Validate.notNull(player, "Player cannot be null");
         Validate.notNull(location, "Spawn location cannot be null");
-        return new Corpse(location, WrappedGameProfile.fromPlayer(player), new ItemStack[]{boots, leggings, chestPlate, helmet}, player.getName());
+        return new Corpse(location, WrappedGameProfile.fromPlayer(player), new ItemStack[]{boots, leggings, chestPlate, helmet}, player.getName(),player.getUniqueId());
     }
 
     /**

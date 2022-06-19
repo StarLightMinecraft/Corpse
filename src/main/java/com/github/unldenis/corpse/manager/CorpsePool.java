@@ -218,7 +218,7 @@ public class CorpsePool implements Listener {
             JsonArray array = new JsonArray();
             this.getCorpses().forEach(it->{
                 JsonObject obj = new JsonObject();
-                obj.addProperty("uuid", it.getUuid().toString());
+                obj.addProperty("uuid", it.getPlayerUuid().toString());
                 obj.add("location", new Gson().toJsonTree(it.getLocation().serialize()));
                 array.add(obj);
             });
