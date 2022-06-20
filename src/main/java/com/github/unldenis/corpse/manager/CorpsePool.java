@@ -91,7 +91,7 @@ public class CorpsePool implements Listener {
                         corpse.hide(player);
                         continue;
                     }
-                    boolean inRange = holoLoc.distanceSquared(playerLoc) <= this.spawnDistance;
+                    boolean inRange = holoLoc.getWorld() == playerLoc.getWorld() && holoLoc.distanceSquared(playerLoc) <= this.spawnDistance;
 
                     if (!inRange && isShown) {
                         corpse.hide(player);

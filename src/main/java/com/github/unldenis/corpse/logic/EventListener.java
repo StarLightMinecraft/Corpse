@@ -28,12 +28,14 @@ public class EventListener implements Listener {
                 .map(Block::getLocation)
                 .orElse(e.getPlayer().getLocation());
         CorpsePool.getInstance().getCorpses().stream()
-                .filter(it -> it.isShownFor(e.getPlayer()) && it.getLocation().distanceSquared(loc) < 4)
+                .filter(it -> it.isShownFor(e.getPlayer())
+                        && it.getLocation().getWorld() == loc.getWorld()
+                        && it.getLocation().distanceSquared(loc) < 4)
                 .min(Comparator.comparingDouble(it -> it.getLocation().distanceSquared(loc)))
                 .ifPresent(it -> {
                     if (mode) {
                         e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 1, 1);
-                        e.getPlayer().sendMessage(ChatColor.RED+"安息吧，不知名的朋友...");
+                        e.getPlayer().sendMessage(ChatColor.RED + "安息吧，不知名的朋友...");
                     } else {
                         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 5 * 20, 0));
                         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 120 * 20, 2));
