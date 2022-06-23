@@ -178,7 +178,7 @@ public class Corpse {
         if(npcs == null) {
             npcs = scoreboard.registerNewTeam(Corpse.TEAM_NAME);
         }
-        npcs.setNameTagVisibility(NameTagVisibility.NEVER);
+        npcs.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
         npcs.addEntry(this.name);
     }
 
