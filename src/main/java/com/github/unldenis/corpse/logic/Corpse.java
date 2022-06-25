@@ -71,9 +71,10 @@ public class Corpse {
         this.id = pool.getFreeEntityId();
         this.uuid = new UUID(new Random().nextLong(), 0);
         this.playerUuid = playerUuid;
-        this.name = name == null ? ProfileUtils.randomName() : name;
+        String rawName = name == null ? ProfileUtils.randomName() : name;
+        this.name = "Corpse:"+rawName.substring(0,Math.min(rawName.length(),15));
         this.location = location;
-        this.profile = new WrappedGameProfile(this.uuid, this.name);
+        this.profile = new WrappedGameProfile(this.uuid, rawName);
         //set skin to profile WrappedGameProfile
         wrappedGameProfile.getProperties().get("textures").forEach(property -> profile.getProperties().put("textures", property));
 
